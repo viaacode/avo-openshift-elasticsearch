@@ -196,6 +196,62 @@ objects:
   metadata:
     creationTimestamp: null
     name: matchbox-services-${ENV}
+    
+    
+    
+- apiVersion: v1
+  data:
+    logback.xml: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <configuration debug="true" scan="true" scanPeriod="3 seconds">
+
+          <logger name="be.thematchbox.service.TheMatchBoxService" level="info"/>
+          <logger name="be.thematchbox.service.AbstractService" level="info"/>
+
+          <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+              <encoder>
+                  <pattern>%d [%.14thread] %-5level %35.35logger{35} - %mdc - %msg%n</pattern>
+                  <charset>UTF-8</charset>
+              </encoder>
+          </appender>
+
+          <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+              <file>${thematchbox.path.home}/log/${service.name}-logFile.log</file>
+              <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                  <!-- daily rollover -->
+                  <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+                  <!-- keep 30 days' worth of history -->
+                  <maxHistory>30</maxHistory>
+              </rollingPolicy>
+
+              <encoder>
+                  <pattern>%-14(%date %10([%.8thread])) %-5level %35.35logger{35} %mdc - %msg%n</pattern>
+                  <charset>UTF-8</charset>
+              </encoder>
+          </appender>
+
+          <if condition='isDefined("thematchbox.daemon")'>
+              <then>
+                  <root level="info">
+                      <appender-ref ref="file"/>
+                  </root>
+              </then>
+              <else>
+                  <root level="info">
+                      <appender-ref ref="console"/>
+                  </root>
+                  <root level="info">
+                      <appender-ref ref="file"/>
+                  </root>
+              </else>
+          </if>
+      </configuration>
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: null
+    name: matchbox-logback
+
 parameters:
   - name: ENV
     value: "qas"
