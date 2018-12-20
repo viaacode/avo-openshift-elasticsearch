@@ -29,8 +29,8 @@ login:	check-env
 clone:
 	cd /tmp && git clone  --single-branch -b ${BRANCH} "${REPO_URI}" 
 deploy:
-	oc create -f avo-indexer-tmpl.yaml
-	oc create -f es-cluster-tmpl.yaml
+	oc apply -f avo-indexer-tmpl.yaml
+	oc apply -f es-cluster-tmpl.yaml
 clean:
 	rm -rf /tmp/${GIT_NAME}
 all:	clean commit login deploy  clone  clean
