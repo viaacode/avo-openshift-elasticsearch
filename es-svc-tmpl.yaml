@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: es-data
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: elasticsearch
+      role: data
+    name: elasticsearch
+  spec:
+    ports:
+    - name: http
+      port: 9200
+      protocol: TCP
+      targetPort: 9200
+    selector:
+      component: elasticsearch
+      role: data
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: elasticsearch
+      role: data
+    name: elasticsearch-data
+  spec:
+    clusterIP: None
+    ports:
+    - name: transport
+      port: 9300
+      protocol: TCP
+      targetPort: 9300
+    selector:
+      component: elasticsearch
+      role: data
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: elasticsearch
+      role: master
+    name: elasticsearch-discovery
+  spec:
+    clusterIP: None
+    ports:
+    - name: transport
+      port: 9300
+      protocol: TCP
+      targetPort: 9300
+    selector:
+      component: elasticsearch
+      role: master
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: elasticsearch
+      role: ingest
+    name: elasticsearch-ingest
+  spec:
+    ports:
+    - name: http
+      port: 9200
+      protocol: TCP
+      targetPort: 9200
+    selector:
+      component: elasticsearch
+      role: ingest
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: elasticsearch
+      role: master
+    name: elasticsearch-master
+  spec:
+    clusterIP: None
+    ports:
+    - name: transport
+      port: 9300
+      protocol: TCP
+      targetPort: 9300
+    selector:
+      component: elasticsearch
+      role: master
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: index-api
+    name: index-api
+  spec:
+    ports:
+    - name: index-api
+      port: 8042
+      protocol: TCP
+      targetPort: 8042
+    selector:
+      component: index-api
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}

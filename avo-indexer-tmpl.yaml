@@ -1,0 +1,209 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: avo-indexer
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 17
+    labels:
+      component: index-api-${ENV}
+    name: index-api-${ENV}
+  spec:
+    replicas: 1
+    selector:
+      component: index-api-${ENV}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          component: index-api-${ENV}
+      spec:
+        containers:
+        - env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: JAVA_OPTS
+            value: -Xms1g -Xmx2g
+          image: ${image}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: index-api
+            timeoutSeconds: 1
+          name: index-api
+          ports:
+          - containerPort: 8042
+            name: index-api
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/health
+              port: index-api
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources: {}
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+              - SYS_RESOURCE
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data
+            name: indexer-storage-${ENV}
+          - mountPath: /usr/local/thematchbox/config/matchbox-services.conf
+            name: matchbox-services-${ENV}
+            subPath: matchbox-services.conf
+          - mountPath: /usr/local/thematchbox/config/logback.xml
+            name: matchbox-logback
+            subPath: logback.xml
+          - mountPath: /usr/local/thematchbox/config/theMatchBox-VIAA_Demo.lic
+            name: matchbox-lic
+            subPath: theMatchBox-VIAA_Demo.lic
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sysctl
+          - -w
+          - vm.max_map_count=262144
+          image: busybox:1.27.2
+          imagePullPolicy: IfNotPresent
+          name: init-sysctl
+          resources: {}
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+              - SYS_RESOURCE
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: indexer-storage-${ENV}
+          persistentVolumeClaim:
+            claimName: indexer-storage-${ENV}       
+        - configMap:
+            defaultMode: 420
+            name: matchbox-services-${ENV}
+          name: matchbox-services-${ENV}
+        - configMap:
+            defaultMode: 420
+            name: matchbox-lic
+          name: matchbox-lic
+        - configMap:
+            defaultMode: 420
+            name: matchbox-logback
+          name: matchbox-logback
+        
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: index-api-${ENV}
+    name: index-api-${ENV}
+  spec:
+    ports:
+    - name: index-api-${ENV}
+      port: 8042
+      protocol: TCP
+      targetPort: 8042
+    selector:
+      component: index-api-${ENV}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+    
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: index-api-${ENV}
+    name: indexer-storage-${ENV}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  status: {}
+    
+- apiVersion: v1
+  data:
+    matchbox-services.conf: |-
+      service: {
+        port: 8042,
+        jerseyServletPath: "/api/*"
+        host: elasticsearch-ingest
+        plugins: [
+          be.thematchbox.service.plugin.IndexerPlugin,
+          be.thematchbox.service.plugin.InfoPlugin
+        ]
+      }
+      es: {
+        nodes: ["elasticsearch-ingest-${ENV}"]
+        httpPort: 9200
+      }
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: null
+    name: matchbox-services-${ENV}
+parameters:
+  - name: ENV
+    value: "qas"
+  - name: licensekey 
+    displayName: Matchbox license key 
+    description: String with the key
+    required: true 
+  - name: image
+    description: where to get the container 
+    value: "thematchbox/thematchbox-services:2.0-beta-3"
+    required: true
