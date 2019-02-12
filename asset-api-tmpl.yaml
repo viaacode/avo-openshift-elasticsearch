@@ -1,0 +1,390 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: asset-api
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 24
+    labels:
+      app: authorize
+    name: authorize-${ENV}
+  spec:
+    replicas: 1
+    selector:
+      app: authorize
+      deploymentconfig: authorize-${ENV}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: authorize
+          deploymentconfig: authorize-${ENV}
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "8080"
+          - name: PUMA_THREADS
+            value: "2"
+          - name: HASURA_GRAPHQL_ACCESS_KEY
+            value: ${HASURA_GRAPHQL_ACCESS_KEY}
+          - name: HASURA_SERVER
+            value: ${HASURA_SERVER}
+          - name: REDIS_URL
+            value: ${REDIS_URL}
+          - name: REDIS_EXPIRE
+            value: "20"
+          - name: VIAA_SAML_SERVER
+            value: ${VIAA_SAML_SERVER}
+          image: registry.gitlab.com/shared-components/sc-hasura/authorize@sha256:25ffbf59711d9575e54a61357e180b23ed06e4179765bc005c7ce4a24afa4a5e
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: authorize-${ENV}
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - authorize-${ENV}
+        from:
+          kind: ImageStreamTag
+          name: authorize:${ENV}
+          namespace: asset-api
+        lastTriggeredImage: registry.gitlab.com/shared-components/sc-hasura/authorize@sha256:25ffbf59711d9575e54a61357e180b23ed06e4179765bc005c7ce4a24afa4a5e
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 20
+    labels:
+      app: avo-hasura-graphql
+    name: avo-hasura-graphql-${ENV}
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: avo-hasura-graphql
+      deploymentconfig: avo-hasura-graphql-${ENV}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: avo-hasura-graphql
+          deploymentconfig: avo-hasura-graphql-${ENV}
+      spec:
+        containers:
+        - env:
+          - name: HASURA_GRAPHQL_DATABASE_URL
+            value: ${HASURA_GRAPHQL_DATABASE_URL}
+          - name: HASURA_GRAPHQL_ACCESS_KEY
+            value: ${HASURA_GRAPHQL_ACCESS_KEY}
+          - name: HASURA_GRAPHQL_MIGRATIONS_DIR
+            value: /avo-migrations
+          - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+            value: "true"
+          - name: HASURA_GRAPHQL_AUTH_HOOK
+            value: ${HASURA_GRAPHQL_AUTH_HOOK}
+          image: registry.gitlab.com/shared-components/sc-hasura/assetapi@sha256:535a2b6584a48f2bab9ecaf2a6189a2b9158c9690a6940a7b204f86e40228acc
+          imagePullPolicy: Always
+          name: avo-hasura-graphql-${ENV}
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - avo-hasura-graphql-${ENV}
+        from:
+          kind: ImageStreamTag
+          name: asset-api:${ENV}
+          namespace: asset-api
+        lastTriggeredImage: registry.gitlab.com/shared-components/sc-hasura/assetapi@sha256:535a2b6584a48f2bab9ecaf2a6189a2b9158c9690a6940a7b204f86e40228acc
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 10
+    labels:
+      app: indexer
+    name: indexer-${ENV}
+  spec:
+    replicas: 1
+    selector:
+      app: indexer
+      deploymentconfig: indexer-${ENV}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: indexer
+          deploymentconfig: indexer-${ENV}
+      spec:
+        containers:
+        - env:
+          - name: DATABASE_URL
+            value: ${DATABASE_URL}
+          - name: ADMIN_LOGIN
+            value: admin
+          - name: ADMIN_PASSWORD
+            value: ${ADMIN_PASSWORD}
+          - name: ELASTIC_SERVER
+            value: $ESHOST
+          - name: ELASTIC_INDEX
+            value: avo_prd
+          - name: ELASTIC_INDEX_COLLECTIONS
+            value: avo_prd_collections
+          - name: SKOR_DB
+            value: ${SKOR_DB}
+          - name: SKOR_DB_SERVER
+            value: ${SKOR_DB_SERVER}
+          - name: SKOR_DB_PORT
+            value: "5432"
+          - name: SKOR_DB_USER
+            value: ${SKOR_DB_USER}
+          - name: SKOR_DB_PASS
+            value: ${SKOR_DB_PASS}
+          image: registry.gitlab.com/shared-components/indexer/qas@sha256:e74251201fe0e5d27ba36bf372db7b4608a1ff65e80d33d815f3bde6e7dd4407
+          imagePullPolicy: Always
+          name: indexer-${ENV}
+          ports:
+          - containerPort: 3000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - indexer
+        from:
+          kind: ImageStreamTag
+          name: indexer:${ENV}
+          namespace: asset-api
+        lastTriggeredImage: registry.gitlab.com/shared-components/indexer/qas@sha256:e74251201fe0e5d27ba36bf372db7b4608a1ff65e80d33d815f3bde6e7dd4407
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: authorize
+    name: authorize-${ENV}
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: authorize-${ENV}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: avo-hasura-graphql
+    name: avo-hasura-graphql-${ENV}
+  spec:
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: avo-hasura-graphql-${ENV}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: indexer
+    name: indexer-${ENV}
+  spec:
+    ports:
+    - name: 3000-tcp
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      deploymentconfig: indexer-${ENV}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+
+
+
+parameters:
+  - name: ENV
+    value: "qas"
+    required: true
+  - name: ESHOST
+    displayName: elazticsearch url
+    description: String with http://
+    required: true
+  - name: SKOR_DB_SERVER
+    displayName: SKOR_DB_SERVER url
+    description: String with hostname
+    required: true
+  - name: SKOR_DB_USER
+    displayName: SKOR_DB_USER
+    description: String with username
+    required: true
+  - name: SKOR_DB
+    displayName: SKOR_DB
+    description: String with db name
+    required: true
+  - name: SKOR_DB_PASS
+    displayName: SKOR_DB_PASS
+    description: String with db password
+    required: true
+  - name: DATABASE_URL
+    description: indexer DATABASE_URL
+    value: postgres://USER:PASSWD@HOST:5432/DBNAME
+    required: true
+  - name: ADMIN_PASSWORD
+    description: admin password
+    value: "paswwd"
+    required: true
+  - name: HASURA_GRAPHQL_DATABASE_URL
+    description: postgres://USER:PASSWD@HOST:5432/DBNAME
+    value: postgres://USER:PASSWD@HOST:5432/DBNAME
+    required: true
+  - name: HASURA_GRAPHQL_ACCESS_KEY
+    description: access key for hasura
+    value: xxfdgtiik
+    required: true
+  - name: HASURA_GRAPHQL_AUTH_HOOK
+    description: string url http://..
+    value: http://authorize.asset-api.svc:8080/graphql_authorize
+    required: true
+  - name: HASURA_SERVER
+    description: string url http://..
+    value: https://services-qas.viaa.be/avo-graph
+    required: true
+  - name: REDIS_URL
+    description: string url http://..
+    value: redis://admin:passwd@redis:6379/2
+    required: true
+  - name: VIAA_SAML_SERVER
+    description: string url http://..:port
+    value:  http://avo-oas-qas.public-api.svc:8080
+    required: true
