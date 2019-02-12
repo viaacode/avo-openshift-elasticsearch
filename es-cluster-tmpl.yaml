@@ -55,6 +55,8 @@ objects:
             value: -Xms1000m -Xmx1000m
           - name: PROCESSORS
             value: "2"
+          - name:  DISCOVERY_SERVICE
+            value: "elasticsearch-discovery-${ENV}"
           image: quay.io/pires/docker-elasticsearch-kubernetes:6.4.2
           imagePullPolicy: IfNotPresent
           livenessProbe:

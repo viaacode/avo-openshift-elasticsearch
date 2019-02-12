@@ -1,4 +1,4 @@
-PROJECT=avo-elasticsearch
+PROJECT=sc-avo2
 WD=/tmp
 REPO_URI=https://github.com/viaacode/avo-openshift-elasticsearch.git
 GIT_NAME=avo-openshift-elasticsearch
