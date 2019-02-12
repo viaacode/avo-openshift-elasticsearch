@@ -31,6 +31,7 @@ clone:
 deploy:
 	oc apply -f avo-indexer-tmpl.yaml
 	oc apply -f es-cluster-tmpl.yaml
+	oc apply -f asset-api-tmpl.yaml
 clean:
 	rm -rf /tmp/${GIT_NAME}
 all:	clean commit login deploy  clone  clean
