@@ -88,7 +88,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: authorize:${ENV}
-          namespace: asset-api
+          namespace: sc-avo2
         lastTriggeredImage: registry.gitlab.com/shared-components/sc-hasura/authorize@sha256:25ffbf59711d9575e54a61357e180b23ed06e4179765bc005c7ce4a24afa4a5e
       type: ImageChange
   status:
@@ -166,7 +166,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: asset-api:${ENV}
-          namespace: asset-api
+          namespace: sc-avo2
         lastTriggeredImage: registry.gitlab.com/shared-components/sc-hasura/assetapi@sha256:535a2b6584a48f2bab9ecaf2a6189a2b9158c9690a6940a7b204f86e40228acc
       type: ImageChange
   status:
@@ -258,7 +258,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: indexer:${ENV}
-          namespace: asset-api
+          namespace: sc-avo2
         lastTriggeredImage: registry.gitlab.com/shared-components/indexer/qas@sha256:e74251201fe0e5d27ba36bf372db7b4608a1ff65e80d33d815f3bde6e7dd4407
       type: ImageChange
   status:
@@ -374,7 +374,7 @@ parameters:
     required: true
   - name: HASURA_GRAPHQL_AUTH_HOOK
     description: string url http://..
-    value: http://authorize.asset-api.svc:8080/graphql_authorize
+    value: http://authorize.sc-avo2.svc:8080/graphql_authorize
     required: true
   - name: HASURA_SERVER
     description: string url http://..
