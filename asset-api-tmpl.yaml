@@ -340,22 +340,27 @@ parameters:
     displayName: elazticsearch url
     description: String with http://
     required: true
+    value: http://elasticsearch-ingest-prd
   - name: SKOR_DB_SERVER
     displayName: SKOR_DB_SERVER url
     description: String with hostname
     required: true
+    value: databaseserver
   - name: SKOR_DB_USER
     displayName: SKOR_DB_USER
     description: String with username
     required: true
+    value: databaseuser
   - name: SKOR_DB
     displayName: SKOR_DB
     description: String with db name
     required: true
+    value: databsename
   - name: SKOR_DB_PASS
     displayName: SKOR_DB_PASS
     description: String with db password
     required: true
+    value: databasepasswd
   - name: DATABASE_URL
     description: indexer DATABASE_URL
     value: postgres://USER:PASSWD@HOST:5432/DBNAME
