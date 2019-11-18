@@ -258,8 +258,9 @@ parameters:
   - name: licensekey 
     displayName: Matchbox license key 
     description: String with the key
-    required: true 
+    required: true
+    value: THELONGKEY
   - name: image
     description: where to get the container 
-    value: "thematchbox/thematchbox-services:2.0-beta-3"
+    value: "https://nexus.thematchbox.be/repository/maven-releases/be/thematchbox/TheMatchBox-Plugin-ES/2.0-build-10/TheMatchBox-Plugin-ES-2.0-build-10-6.6.0.zip"
     required: true
