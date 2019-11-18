@@ -203,7 +203,8 @@ parameters:
     displayName: Matchbox license key 
     description: String with the key
     required: true 
+    value: Changethistotheverylongggggkey
   - name: matchboxuri
     description: where to get the plugin
-    value: "http://repo.do.viaa.be/TheMatchBox-PluginES6-2.0-beta-3.zip"
+    value: "https://nexus.thematchbox.be/repository/maven-releases/be/thematchbox/TheMatchBox-Plugin-ES/2.0-build-10/TheMatchBox-Plugin-ES-2.0-build-10-6.6.0.zip"
     required: true
