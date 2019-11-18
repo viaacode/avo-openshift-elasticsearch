@@ -141,7 +141,7 @@ objects:
         resources:
           requests:
             storage: 12Gi
-        storageClassName: vsphere-standard
+        storageClassName: default
       status:
         phase: Pending
   status:
