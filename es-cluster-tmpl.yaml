@@ -146,7 +146,7 @@ objects:
         resources:
           requests:
             storage: 12Gi
-        storageClassName: ibm-block-silver
+        storageClassName: ibmc-block-silver
       status:
         phase: Pending
   status:
