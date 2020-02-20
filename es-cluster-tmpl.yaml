@@ -57,7 +57,7 @@ objects:
             value: "2"
           - name:  DISCOVERY_SERVICE
             value: "elasticsearch-discovery-${ENV}"
-          image: quay.io/pires/docker-elasticsearch-kubernetes:6.4.2
+          image: 'docker-registry.default.svc:5000/sc-avo2/es:${ENV}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
@@ -85,7 +85,13 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
-          resources: {}
+          resources: 
+            limits:
+              cpu: '2'
+              memory: 2Gi
+            requests:
+              cpu: 900m
+              memory: 768Mi          
           securityContext:
             capabilities:
               add:
@@ -96,7 +102,7 @@ objects:
           volumeMounts:
           - mountPath: /data
             name: es-storage
-          - mountPath: /home/elasticsearch/.thematchbox/theMatchBox-VIAA_Demo.lic
+          - mountPath: /elasticsearch/theMatchBox-VIAA_Demo.lic
             name: matchbox-lic
             subPath: theMatchBox-VIAA_Demo.lic
         dnsPolicy: ClusterFirst
@@ -104,8 +110,7 @@ objects:
         - command:
           - /bin/sh
           - -c
-          - sysctl -w vm.max_map_count=262144 && mkdir -p /home/elasticsearch/.thematchbox
-            && chmod 777  /home/elasticsearch/.thematchbox
+          - sysctl -w vm.max_map_count=262144 
           image: busybox:1.27.2
           imagePullPolicy: IfNotPresent
           name: init-sysctl
@@ -206,5 +211,5 @@ parameters:
     value: Changethistotheverylongggggkey
   - name: matchboxuri
     description: where to get the plugin
-    value: "https://nexus.thematchbox.be/repository/maven-releases/be/thematchbox/TheMatchBox-Plugin-ES/2.0-build-10/TheMatchBox-Plugin-ES-2.0-build-10-6.6.0.zip"
+    value: "                https://nexus.thematchbox.be/repository/maven-releases/be/thematchbox/TheMatchBox-Plugin-ES/2.0-build-10/TheMatchBox-Plugin-ES-2.0-build-10-6.6.0.zip"
     required: true
