@@ -16,7 +16,8 @@ OC_PROJECT=${PROJECT}
 ifndef BRANCH
   $(error BRANCH is undefined)
 endif
-TAG=${ENV}
+ENV=qas
+TAG=6.6.0
 
 commit:
 	git add .
