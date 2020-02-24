@@ -35,7 +35,7 @@ clone:
 	cd /tmp && git clone  --single-branch -b ${BRANCH} "${REPO_URI}" 
 buildimage:
 	cd /tmp/${GIT_NAME}
-        docker build -t ${oc_registry}/${OC_PROJECT}/${APP_NAME}:${TAG} .
+	docker build -t ${oc_registry}/${OC_PROJECT}/${APP_NAME}:${TAG} .
 
 deploy:
 	oc apply -f avo-indexer-tmpl.yaml
