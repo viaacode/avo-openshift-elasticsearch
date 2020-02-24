@@ -33,3 +33,7 @@ discovery:
     minimum_master_nodes: ${NUMBER_OF_MASTERS}
 
 xpack.ml.enabled: false
+
+s3.client.default.access_key: ${S3_ACCESS_KEY}
+s3.client.default.secret_key: ${S3_SECRET_KEY}
+
