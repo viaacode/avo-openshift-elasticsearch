@@ -26,7 +26,7 @@ checkTools:
 	if [ -x "${path_to_executable}" ]; then  echo "OC tools found here: ${path_to_executable}"; else echo please install the oc tools: https://github.com/openshiftorigin/releases/tag/v3.9.0; fi; uname && netstat | grep docker| grep -e CONNECTED  1> /dev/null || echo docker not running or not using linux
 login:	check-env
 	oc login do-prd-okp-m0.do.viaa.be:8443
-        docker login -p "${TOKEN}" -u unused ${oc_registry}
+	docker login -p "${TOKEN}" -u unused ${oc_registry}
 	oc new-project "${OC_PROJECT}" || oc project "${OC_PROJECT}"
 	sleep 4 && oc new-project "${OC_PROJECT}" || oc project "${OC_PROJECT}"
 	oc adm policy add-scc-to-user privileged -n${OC_PROJECT} -z default
@@ -34,7 +34,7 @@ login:	check-env
 clone:
 	cd /tmp && git clone  --single-branch -b ${BRANCH} "${REPO_URI}" 
 buildimage:
-        cd /tmp/${GIT_NAME}
+	cd /tmp/${GIT_NAME}
         docker build -t ${oc_registry}/${OC_PROJECT}/${APP_NAME}:${TAG} .
 
 deploy:
@@ -43,5 +43,5 @@ deploy:
 	oc apply -f asset-api-tmpl.yaml
 clean:
 	rm -rf /tmp/${GIT_NAME}
-all:	clean commit login deploy  clone  clean
+all:	clean commit login clone buildimage  clean
 
