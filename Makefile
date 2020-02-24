@@ -7,7 +7,7 @@ TOKEN=`oc whoami -t`
 path_to_oc=`which oc`
 ES_VERSION=6.6.0
 oc_registry=docker-registry-default.apps.do-prd-okp-m0.do.viaa.be
-
+APP_NAME=es
 .ONESHELL:
 SHELL = /bin/bash
 .PHONY:	all
