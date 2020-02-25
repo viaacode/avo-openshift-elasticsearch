@@ -58,6 +58,9 @@ export NODE_NAME=${NODE_NAME}
 rm -rf /elasticsearch/modules/x-pack/x-pack-ml
 rm -rf /elasticsearch/modules/x-pack-ml
 
+## set keystore parms for s3
+echo ${S3_ACCESS_KEY} "${BASE}/bin/elasticsearch-keystore --stdin add s3.client.default.access_key"
+
 # Run
 if [[ $(whoami) == "root" ]]; then
     if [ ! -d "/data/data/nodes/0" ]; then

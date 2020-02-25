@@ -60,7 +60,7 @@ ENV SHARD_ALLOCATION_AWARENESS ""
 ENV SHARD_ALLOCATION_AWARENESS_ATTR ""
 ENV MEMORY_LOCK true
 ENV REPO_LOCATIONS ""
-
+ENV S3_ACCESS_KEY "akey"
 # Volume for Elasticsearch data
 VOLUME ["/data"]
 # Override config, otherwise plug-in install will fail
