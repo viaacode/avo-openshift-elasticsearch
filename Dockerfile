@@ -28,7 +28,7 @@ RUN apk add --no-cache -t .build-deps gnupg openssl \
   tar -xf elasticsearch.tar.gz \
   && ls -lah \
   && mv elasticsearch-$ES_VERSION /elasticsearch \
-  && adduser -DH -s /sbin/nologin elasticsearch \
+  && adduser -D -h /elasticsearch -s /bin/bash elasticsearch \
   && mkdir -p /elasticsearch/config/scripts /elasticsearch/plugins \
   && chown -R elasticsearch:elasticsearch /elasticsearch \
   && rm -rf /tmp/* \
@@ -73,4 +73,5 @@ ENV DISCOVERY_SERVICE elasticsearch-discovery
 
 # Kubernetes requires swap is turned off, so memory lock is redundant
 ENV MEMORY_LOCK false
+USER elasticsearch
 CMD ["/run.sh"]

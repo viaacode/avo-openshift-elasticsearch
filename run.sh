@@ -59,8 +59,12 @@ rm -rf /elasticsearch/modules/x-pack/x-pack-ml
 rm -rf /elasticsearch/modules/x-pack-ml
 
 ## set keystore parms for s3
-echo ${S3_ACCESS_KEY} | "${BASE}/bin/elasticsearch-keystore add --stdin s3.client.default.access_key"
-echo ${S3_SECRET_KEY} | "${BASE}/bin/elasticsearch-keystore add --stdin s3.client.default.secret_key"
+echo setting up keystore secure settings config ${BASE}/config
+
+"${BASE}"/bin/elasticsearch-keystore create
+
+echo ${S3_ACCESS_KEY} | "${BASE}"/bin/elasticsearch-keystore add --stdin s3.client.meemoo.access_key
+echo ${S3_SECRET_KEY} | "${BASE}"/bin/elasticsearch-keystore add --stdin s3.client.meemoo.secret_key
 
 # Run
 if [[ $(whoami) == "root" ]]; then
