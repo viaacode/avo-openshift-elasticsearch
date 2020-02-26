@@ -34,3 +34,5 @@ discovery:
 
 xpack.ml.enabled: false
 
+cloud.aws.signer: S3SignerType
+
