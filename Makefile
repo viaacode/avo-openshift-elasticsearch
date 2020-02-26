@@ -14,10 +14,11 @@ SHELL = /bin/bash
 check-env:
 OC_PROJECT=${PROJECT}
 ifndef BRANCH
-  $(error BRANCH is undefined)
+#  $(error BRANCH is undefined)
+BRANCH=master
 endif
 ENV=qas
-TAG=6.6.0
+TAG=`git describe --tags`
 
 commit:
 	git add .
@@ -44,5 +45,5 @@ deploy:
 	oc apply -f asset-api-tmpl.yaml
 clean:
 	rm -rf /tmp/${GIT_NAME}
-all:	clean commit login clone buildimage  clean
+all:	clean commit clone buildimage  clean
 

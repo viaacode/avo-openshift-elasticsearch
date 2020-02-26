@@ -35,3 +35,4 @@ discovery:
 xpack.ml.enabled: false
 
 
+s3.client.meemoo.endpoint: ${S3_ENDPOINT}
