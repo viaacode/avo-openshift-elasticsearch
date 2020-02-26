@@ -6,7 +6,8 @@ $APP_NAME=es
 TOKEN=`oc whoami -t`
 path_to_oc=`which oc`
 ES_VERSION=6.6.0
-oc_registry=docker-registry-default.apps.do-prd-okp-m0.do.viaa.be
+#oc_registry=docker-registry-default.apps.do-prd-okp-m0.do.viaa.be
+oc_registry=`sh login_oc.sh https://c100-e.eu-de.containers.cloud.ibm.com:31240 2>/dev/null|rev|awk '{print $1}'|rev|tail -n1`
 ENDPOINT=`oc project | awk '{print $6}'| cut -d '"' -f 2`
 APP_NAME=es
 .ONESHELL:

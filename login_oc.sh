@@ -34,4 +34,5 @@ docker_login(){
 oc_login && docker_login
 
 echo "You are now logged in as ${OC_USER} in openshift and the docker registry on ENDPOINT ${ENDPOINT}"
+echo "You are now logged in as ${OC_USER} in openshift and the docker registry on oc_REGISTRY ${OC_REGISTRY}"
 
