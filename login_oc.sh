@@ -3,7 +3,7 @@
 if [ -z $1 ];then echo "Please give the endpoint url as arg"  &exit 1  ;fi
 cd /tmp
 echo $1
-set -x
+set +x
 ## set defaults
 ENDPOINT="$1"
 ## openshift login function
